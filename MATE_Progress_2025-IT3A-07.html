@@ -1,0 +1,1151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Progress | #2024-IT3A-07</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=space-grotesk:400,500,600,700|jetbrains-mono:400,500,600" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface-2: #1a2235;
+    --surface-3: #222d42;
+    --text: #e8edf5;
+    --text-secondary: #8892a8;
+    --text-muted: #4a5568;
+    --border: #1e2a3a;
+    --accent: #10b981;
+    --accent-glow: rgba(16, 185, 129, 0.15);
+    --accent-2: #3b82f6;
+    --grammar: #f87171;
+    --grammar-soft: rgba(248, 113, 113, 0.1);
+    --vocab: #fbbf24;
+    --vocab-soft: rgba(251, 191, 36, 0.1);
+    --it-vocab: #34d399;
+    --it-vocab-soft: rgba(52, 211, 153, 0.1);
+    --content: #a78bfa;
+    --content-soft: rgba(167, 139, 250, 0.1);
+    --xp: #fbbf24;
+    --class-avg: #6366f1;
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Space Grotesk', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 32px 24px 60px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 32px;
+    animation: fadeDown 0.6s ease;
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .avatar {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--accent), var(--accent-2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    font-weight: 700;
+    color: white;
+    box-shadow: 0 0 20px var(--accent-glow);
+    flex-shrink: 0;
+  }
+  .header-info h1 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .header-info span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+  .header-right {
+    text-align: right;
+  }
+  .teacher-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .semester-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-top: 6px;
+    display: inline-block;
+  }
+
+  /* ── XP Bar ── */
+  .xp-section {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 24px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease 0.1s both;
+  }
+  .xp-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+  .xp-level {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .level-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    background: linear-gradient(135deg, var(--xp), #f59e0b);
+    color: #1a1a2e;
+    padding: 4px 12px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+  }
+  .level-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .xp-numbers {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .xp-bar-bg {
+    height: 10px;
+    background: var(--surface-3);
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  .xp-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--xp), #f59e0b);
+    border-radius: 10px;
+    width: 0%;
+    transition: width 1.5s cubic-bezier(0.22, 1, 0.36, 1);
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.3);
+  }
+
+  /* ── Stats Row ── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease 0.2s both;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px 16px;
+    text-align: center;
+  }
+  .stat-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.2;
+    margin-bottom: 4px;
+  }
+  .stat-value.grade { color: var(--accent); }
+  .stat-value.streak { color: var(--xp); }
+  .stat-value.errors { color: var(--grammar); }
+  .stat-value.tasks { color: var(--accent-2); }
+  .stat-value.rank { color: var(--accent-2); }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .stat-delta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    margin-top: 4px;
+  }
+  .stat-delta.down { color: var(--accent); }
+
+  /* ── Section Title ── */
+  .section-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 16px;
+    padding-left: 2px;
+  }
+
+  /* ── Grade Chart ── */
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease 0.3s both;
+  }
+  .chart-card canvas {
+    width: 100%;
+    height: auto;
+  }
+  .chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+  .chart-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .legend-line {
+    width: 20px;
+    height: 3px;
+    border-radius: 2px;
+  }
+
+  /* ── Error Reduction ── */
+  .error-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease 0.4s both;
+  }
+  .error-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+  }
+  .error-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+  }
+  .error-cat {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .error-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-weight: 500;
+  }
+  .error-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .error-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .error-bar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: var(--text-muted);
+    width: 18px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .error-bar-bg {
+    flex: 1;
+    height: 8px;
+    background: var(--surface-3);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .error-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    width: 0%;
+    transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .error-bar-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-secondary);
+    width: 14px;
+    flex-shrink: 0;
+  }
+
+  /* ── Radar Chart ── */
+  .radar-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease 0.5s both;
+  }
+  .radar-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .radar-card canvas {
+    margin-bottom: 8px;
+  }
+  .radar-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* ── Achievements ── */
+  .achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease 0.6s both;
+  }
+  .achievement {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, border-color 0.2s;
+  }
+  .achievement:hover {
+    transform: translateY(-2px);
+    border-color: var(--accent);
+  }
+  .achievement.locked {
+    opacity: 0.35;
+  }
+  .achievement.locked:hover {
+    transform: none;
+    border-color: var(--border);
+  }
+  .achievement-icon {
+    font-size: 28px;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .achievement-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 4px;
+    line-height: 1.3;
+  }
+  .achievement-desc {
+    font-size: 10px;
+    color: var(--text-muted);
+    line-height: 1.4;
+  }
+  .achievement-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, var(--accent-glow) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+  .achievement:not(.locked):hover .achievement-glow {
+    opacity: 1;
+  }
+  .achievement-new {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    font-weight: 600;
+    background: var(--accent);
+    color: var(--bg);
+    padding: 2px 6px;
+    border-radius: 4px;
+    letter-spacing: 0.5px;
+  }
+
+  /* ── Before/After ── */
+  .compare-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px;
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease 0.7s both;
+  }
+  .compare-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  .compare-toggle {
+    display: flex;
+    background: var(--surface-3);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .compare-btn {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    padding: 6px 16px;
+    border: none;
+    background: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .compare-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+  }
+  .compare-texts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .compare-col {
+    padding: 18px;
+    border-radius: 10px;
+    font-size: 13px;
+    line-height: 1.8;
+  }
+  .compare-col.before {
+    background: rgba(248, 113, 113, 0.05);
+    border: 1px solid rgba(248, 113, 113, 0.15);
+  }
+  .compare-col.after {
+    background: rgba(16, 185, 129, 0.05);
+    border: 1px solid rgba(16, 185, 129, 0.15);
+  }
+  .compare-col-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .compare-col.before .compare-col-label { color: var(--grammar); }
+  .compare-col.after .compare-col-label { color: var(--accent); }
+  .compare-col p {
+    color: var(--text-secondary);
+  }
+  .compare-col .error-highlight {
+    text-decoration: underline wavy;
+    text-decoration-color: var(--grammar);
+    text-underline-offset: 3px;
+  }
+  .compare-col .good-highlight {
+    color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* ── Timeline ── */
+  .timeline {
+    margin-bottom: 24px;
+    animation: fadeDown 0.6s ease 0.8s both;
+  }
+  .timeline-item {
+    display: flex;
+    gap: 16px;
+    padding-bottom: 20px;
+    position: relative;
+  }
+  .timeline-item:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    left: 17px;
+    top: 38px;
+    bottom: 0;
+    width: 2px;
+    background: var(--border);
+  }
+  .timeline-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    font-size: 14px;
+    font-weight: 700;
+    z-index: 1;
+  }
+  .timeline-body {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    flex: 1;
+  }
+  .timeline-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 2px;
+  }
+  .timeline-meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+  .timeline-grade {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 6px;
+    display: inline-block;
+  }
+  .timeline-xp {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--xp);
+    margin-left: 8px;
+  }
+
+  /* ── Footer ── */
+  .footer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 var(--accent-glow); }
+    50% { box-shadow: 0 0 20px 4px var(--accent-glow); }
+  }
+  @keyframes countUp {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .animate-in {
+    animation: countUp 0.4s ease both;
+  }
+
+  @media (max-width: 640px) {
+    .container { padding: 20px 16px 40px; }
+    .stats-row { grid-template-columns: repeat(2, 1fr); }
+    .error-grid { grid-template-columns: 1fr; }
+    .radar-section { grid-template-columns: 1fr; }
+    .achievements-grid { grid-template-columns: repeat(2, 1fr); }
+    .compare-texts { grid-template-columns: 1fr; }
+    .header { flex-direction: column; gap: 12px; }
+    .stat-value { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="avatar">07</div>
+      <div class="header-info">
+        <h1>Semester Progress</h1>
+        <span>#2024-IT3A-07 - English / Economics</span>
+      </div>
+    </div>
+    <div class="header-right">
+      <a href="MATE_Feedback_2024-IT3A-07.html" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);text-decoration:none;padding:5px 12px;border:1px solid var(--accent);border-radius:8px;transition:all .2s;" onmouseover="this.style.background='var(--accent)';this.style.color='#0b0f19'" onmouseout="this.style.background='none';this.style.color='var(--accent)'">&#x2197; Latest Feedback</a>
+      <div class="teacher-tag">Ms Borgwardt</div>
+      <div class="semester-tag">WS 2025/26</div>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.7; margin-bottom: 24px; animation: fadeDown 0.6s ease 0.05s both;">
+    This is your personal progress report for the semester. It tracks how your writing has developed across five assignments in English/Economics, based on individual AI-assisted feedback after each task.
+  </div>
+
+  <!-- XP Bar -->
+  <div class="xp-section">
+    <div class="xp-header">
+      <div class="xp-level">
+        <span class="level-badge">LVL 3</span>
+        <span class="level-title">Confident Writer</span>
+      </div>
+      <div class="xp-numbers">1,680 / 2,500 XP</div>
+    </div>
+    <div class="xp-bar-bg">
+      <div class="xp-bar-fill" id="xpFill"></div>
+    </div>
+    <div style="font-size: 11px; color: var(--text-muted); margin-top: 8px;">You earn XP for each assignment based on your score and improvement. Higher grades and bigger jumps earn more.</div>
+  </div>
+
+  <!-- Teacher's Note -->
+  <div style="background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(59,130,246,0.06)); border: 1px solid rgba(16,185,129,0.15); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 24px; animation: fadeDown 0.6s ease 0.15s both;">
+    <div style="font-size: 13px; font-weight: 600; color: var(--accent); margin-bottom: 8px;">Note from Ms Borgwardt</div>
+    <div style="font-size: 13px; color: var(--text-secondary); line-height: 1.7;">You started the semester well below class average, and I can see how much effort you have put in since then. The dip at the SWOT analysis was a tough moment, but instead of giving up you came back stronger. Your use of professional vocabulary and IT terminology has improved significantly, and your writing is becoming more structured with every task. One grammar pattern still needs your attention: subject-verb agreement keeps slipping through, especially with collective nouns like "target group." But overall this is solid progress. Keep it up.</div>
+  </div>
+
+  <!-- Stats Row -->
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-value grade" id="statGrade">3+</div>
+      <div class="stat-label">Current Grade</div>
+      <div class="stat-delta">+2 levels since start</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value streak" id="statStreak">2</div>
+      <div class="stat-label">Improvement Streak</div>
+      <div class="stat-delta">Tasks 4 and 5</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value errors" id="statErrors">1</div>
+      <div class="stat-label">Grammar Errors</div>
+      <div class="stat-delta down">-3 since first task</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-value rank" id="statRank">8<span style="font-size:14px;color:var(--text-muted);">/23</span></div>
+      <div class="stat-label">Class Ranking</div>
+      <div class="stat-delta">Top 35%</div>
+    </div>
+  </div>
+
+  <!-- Grade Trajectory -->
+  <div class="section-title">Grade Trajectory vs. Class Average</div>
+  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; margin-top: -10px;">Your points per assignment compared to the class. Each task is graded out of 15 points.</div>
+  <div class="chart-card">
+    <canvas id="gradeChart" width="740" height="300"></canvas>
+    <div class="chart-legend">
+      <div class="chart-legend-item">
+        <div class="legend-line" style="background: var(--accent);"></div>
+        <span>Your points</span>
+      </div>
+      <div class="chart-legend-item">
+        <div class="legend-line" style="background: var(--class-avg);"></div>
+        <span>Class average</span>
+      </div>
+      <div class="chart-legend-item">
+        <div class="legend-line" style="background: var(--text-muted); opacity: 0.3;"></div>
+        <span>Maximum (15 pts)</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Reduction -->
+  <div class="section-title">Error Reduction by Category</div>
+  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; margin-top: -10px;">Number of errors per category in each assignment. Shorter bars = fewer errors = progress.</div>
+  <div class="error-grid">
+    <div class="error-card">
+      <div class="error-card-header">
+        <span class="error-cat" style="color: var(--grammar);">Grammar</span>
+        <span class="error-badge" style="background: var(--grammar-soft); color: var(--grammar);">4 &gt; 1</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:14px;">Subject-verb agreement, plurals</div>
+      <div class="error-bars" id="grammarBars"></div>
+    </div>
+    <div class="error-card">
+      <div class="error-card-header">
+        <span class="error-cat" style="color: var(--vocab);">Vocabulary</span>
+        <span class="error-badge" style="background: var(--vocab-soft); color: var(--vocab);">2 &gt; 1</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:14px;">Formal register, word choice</div>
+      <div class="error-bars" id="vocabBars"></div>
+    </div>
+    <div class="error-card">
+      <div class="error-card-header">
+        <span class="error-cat" style="color: var(--it-vocab);">IT Vocabulary</span>
+        <span class="error-badge" style="background: var(--it-vocab-soft); color: var(--it-vocab);">3 &gt; 1</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:14px;">Industry terms, technical language</div>
+      <div class="error-bars" id="itBars"></div>
+    </div>
+    <div class="error-card">
+      <div class="error-card-header">
+        <span class="error-cat" style="color: var(--content);">Content Depth</span>
+        <span class="error-badge" style="background: var(--content-soft); color: var(--content);">1 &gt; 0</span>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:14px;">Analysis quality, specificity</div>
+      <div class="error-bars" id="contentBars"></div>
+    </div>
+  </div>
+
+  <!-- Radar Chart -->
+  <div class="section-title">Skills Profile</div>
+  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; margin-top: -10px;">How your skills have developed across five areas. A bigger shape means stronger skills overall.</div>
+  <div class="radar-section">
+    <div class="radar-card">
+      <canvas id="radarBefore" width="260" height="260"></canvas>
+      <div class="radar-label">Task 1 - Sept 2025</div>
+    </div>
+    <div class="radar-card">
+      <canvas id="radarAfter" width="260" height="260"></canvas>
+      <div class="radar-label">Task 5 - Feb 2026</div>
+    </div>
+  </div>
+
+  <!-- Achievements -->
+  <div class="section-title">Achievements</div>
+  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; margin-top: -10px;">Milestones you have unlocked this semester. Greyed-out badges are still up for grabs.</div>
+  <div class="achievements-grid">
+    <div class="achievement">
+      <div class="achievement-glow"></div>
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:var(--accent-glow);color:var(--accent);">1</div>
+      <div class="achievement-name">First Feedback</div>
+      <div class="achievement-desc">Reviewed all corrections in your first feedback</div>
+    </div>
+    <div class="achievement">
+      <div class="achievement-glow"></div>
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:var(--vocab-soft);color:var(--vocab);">2</div>
+      <div class="achievement-name">Bounce Back</div>
+      <div class="achievement-desc">Improved after a plateau at Task 3</div>
+    </div>
+    <div class="achievement">
+      <div class="achievement-glow"></div>
+      <div class="achievement-new">NEW</div>
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:var(--grammar-soft);color:var(--grammar);">3</div>
+      <div class="achievement-name">Grammar Progress</div>
+      <div class="achievement-desc">Reduced grammar errors from 4 to 1</div>
+    </div>
+    <div class="achievement">
+      <div class="achievement-glow"></div>
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:rgba(59,130,246,0.15);color:var(--accent-2);">5</div>
+      <div class="achievement-name">5 Tasks Done</div>
+      <div class="achievement-desc">Completed all five semester assignments</div>
+    </div>
+    <div class="achievement">
+      <div class="achievement-glow"></div>
+      <div class="achievement-new">NEW</div>
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:rgba(99,102,241,0.15);color:var(--class-avg);">+</div>
+      <div class="achievement-name">Above the Line</div>
+      <div class="achievement-desc">Scored above class average for the first time</div>
+    </div>
+    <div class="achievement locked">
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:var(--surface-3);color:var(--text-muted);">?</div>
+      <div class="achievement-name">Grammar Pro</div>
+      <div class="achievement-desc">Submit a task with zero grammar errors</div>
+    </div>
+    <div class="achievement locked">
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:var(--surface-3);color:var(--text-muted);">?</div>
+      <div class="achievement-name">Tech Speaker</div>
+      <div class="achievement-desc">Use 5+ IT terms correctly in one task</div>
+    </div>
+    <div class="achievement locked">
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:var(--surface-3);color:var(--text-muted);">?</div>
+      <div class="achievement-name">5-Task Streak</div>
+      <div class="achievement-desc">Improve your grade 5 times in a row</div>
+    </div>
+    <div class="achievement locked">
+      <div style="width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;margin-bottom:10px;background:var(--surface-3);color:var(--text-muted);">?</div>
+      <div class="achievement-name">Grade 1 Club</div>
+      <div class="achievement-desc">Reach a grade of 1 on any assignment</div>
+    </div>
+  </div>
+
+  <!-- Before / After Comparison -->
+  <div class="section-title">Before and After</div>
+  <div class="compare-card">
+    <div style="font-size: 14px; font-weight: 600; margin-bottom: 6px;">Writing Quality: First vs. Latest Assignment</div>
+    <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 20px;">Two different tasks, five months apart. Same student. Look at how the language, structure, and use of technical terms have developed.</div>
+    <div class="compare-texts">
+      <div class="compare-col before">
+        <div class="compare-col-label">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--grammar);"></span>
+          Task 1: Target Group Analysis (4+)
+        </div>
+        <p><span class="error-highlight">My target group are</span> people studying from the age 18 and up until the average age of finishing <span class="error-highlight">studys</span> such as university <span class="error-highlight">which are 22 and 27</span>. My target group isn't <span class="error-highlight">bound by nation</span> and is accessible globally. My AI can help them with their studies and allow them to save time. My AI also makes studying easier. The ads would be inspiring and professional <span class="error-highlight">of the sorts</span>.</p>
+      </div>
+      <div class="compare-col after">
+        <div class="compare-col-label">
+          <span style="width:8px; height:8px; border-radius:50%; background:var(--accent);"></span>
+          Task 5: Investor Pitch (3+)
+        </div>
+        <p>Our app is called StudyBuddy and it <span class="good-highlight">solves the problem</span> that most students don't have a <span class="good-highlight">structured revision plan</span> and waste time studying things they already know. The app uses an <span class="good-highlight">algorithm</span> that tracks what you got wrong and <span class="good-highlight">creates personalized quizzes</span> so you only revise what you actually need. We use a <span class="good-highlight">freemium model</span> where the basic version is free but the <span class="good-highlight">premium features</span> like AI-generated flashcards <span class="error-highlight">costs</span> 4.99 per month. Our main <span class="good-highlight">competitors</span> are Anki and Quizlet but they don't offer <span class="good-highlight">personalized learning paths</span>. We plan to <span class="good-highlight">acquire users</span> through <span class="good-highlight">campus ambassadors</span> at universities and through TikTok where our target group <span class="error-highlight">are</span> most active.</p>
+      </div>
+    </div>
+    <div style="margin-top:14px;font-size:11px;color:var(--text-muted);text-align:center;">Green = strong use of professional language and marketing concepts | Red underline = remaining grammar issues</div>
+  </div>
+
+  <!-- Assignment Timeline -->
+  <div class="section-title">Assignment History</div>
+  <div style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px; margin-top: -10px;">All five assignments this semester with grades, correction counts, and XP earned.</div>
+  <div class="timeline">
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background: var(--grammar-soft); color: var(--grammar);">1</div>
+      <div class="timeline-body">
+        <div class="timeline-title">Target Group Analysis</div>
+        <div class="timeline-meta">Sept 29, 2025 - 10 corrections</div>
+        <span class="timeline-grade" style="background: var(--grammar-soft); color: var(--grammar);">4+ (6.3 pts)</span>
+        <span class="timeline-xp">+180 XP</span>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background: var(--vocab-soft); color: var(--vocab);">2</div>
+      <div class="timeline-body">
+        <div class="timeline-title">Market Research Report</div>
+        <div class="timeline-meta">Nov 3, 2025 - 8 corrections</div>
+        <span class="timeline-grade" style="background: var(--vocab-soft); color: var(--vocab);">3- (7.8 pts)</span>
+        <span class="timeline-xp">+280 XP</span>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background: var(--grammar-soft); color: var(--grammar);">3</div>
+      <div class="timeline-body">
+        <div class="timeline-title">SWOT Analysis</div>
+        <div class="timeline-meta">Dec 8, 2025 - 7 corrections</div>
+        <span class="timeline-grade" style="background: var(--grammar-soft); color: var(--grammar);">3- (7.5 pts)</span>
+        <span class="timeline-xp">+260 XP</span>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background: var(--content-soft); color: var(--content);">4</div>
+      <div class="timeline-body">
+        <div class="timeline-title">Business Plan Draft</div>
+        <div class="timeline-meta">Jan 19, 2026 - 4 corrections</div>
+        <span class="timeline-grade" style="background: var(--content-soft); color: var(--content);">3 (9.0 pts)</span>
+        <span class="timeline-xp">+420 XP</span>
+      </div>
+    </div>
+    <div class="timeline-item">
+      <div class="timeline-dot" style="background: var(--accent-glow); color: var(--accent); box-shadow: 0 0 12px var(--accent-glow);">5</div>
+      <div class="timeline-body" style="border-color: rgba(16,185,129,0.3);">
+        <div class="timeline-title">Investor Pitch</div>
+        <div class="timeline-meta">Feb 24, 2026 - 3 corrections</div>
+        <span class="timeline-grade" style="background: rgba(16,185,129,0.1); color: var(--accent);">3+ (10.2 pts)</span>
+        <span class="timeline-xp">+540 XP</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- CTA to Feedback -->
+  <a href="MATE_Feedback_2024-IT3A-07.html" style="display:block;text-decoration:none;margin-top:24px;padding:18px 24px;background:var(--surface);border:1px solid var(--accent);border-radius:12px;transition:all .2s;animation:fadeDown 0.6s ease 0.8s both;" onmouseover="this.style.background='rgba(16,185,129,0.08)';this.style.borderColor='var(--accent)'" onmouseout="this.style.background='var(--surface)';this.style.borderColor='var(--accent)'">
+    <div style="display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:12px;font-weight:600;color:var(--accent);margin-bottom:4px;">View Latest Feedback &#x2197;</div>
+        <div style="font-size:12px;color:var(--text-secondary);">Task 5 — see your corrections, error breakdown, and teacher notes</div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:20px;color:var(--accent);">→</div>
+    </div>
+  </a>
+
+  <!-- Footer -->
+  <div class="footer">
+    MATE - Ms Borgwardt - ████████████████ - Student progress analytics
+  </div>
+
+</div>
+
+<script>
+// Data
+const assignments = [
+  { label: "Task 1", short: "Sept", points: 6.3, max: 15, grammar: 4, vocab: 2, it: 3, content: 1, classAvg: 8.5 },
+  { label: "Task 2", short: "Nov", points: 7.8, max: 15, grammar: 3, vocab: 2, it: 2, content: 1, classAvg: 8.8 },
+  { label: "Task 3", short: "Dec", points: 7.5, max: 15, grammar: 3, vocab: 1, it: 2, content: 1, classAvg: 8.6 },
+  { label: "Task 4", short: "Jan", points: 9.0, max: 15, grammar: 2, vocab: 1, it: 1, content: 0, classAvg: 9.0 },
+  { label: "Task 5", short: "Feb", points: 10.2, max: 15, grammar: 1, vocab: 1, it: 1, content: 0, classAvg: 9.2 }
+];
+
+// ── Animate on load ──
+window.addEventListener('DOMContentLoaded', () => {
+  setTimeout(() => {
+    document.getElementById('xpFill').style.width = '67%';
+    drawGradeChart();
+    buildErrorBars();
+    drawRadar('radarBefore', [0.42, 0.35, 0.25, 0.38, 0.30], 'rgba(248,113,113,0.25)', 'rgba(248,113,113,0.5)');
+    drawRadar('radarAfter', [0.75, 0.68, 0.62, 0.72, 0.65], 'rgba(16,185,129,0.2)', 'rgba(16,185,129,0.6)');
+  }, 300);
+});
+
+// ── Grade Line Chart ──
+function drawGradeChart() {
+  const canvas = document.getElementById('gradeChart');
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  canvas.width = canvas.offsetWidth * dpr;
+  canvas.height = 300 * dpr;
+  ctx.scale(dpr, dpr);
+  const W = canvas.offsetWidth;
+  const H = 300;
+  const pad = { top: 30, right: 30, bottom: 40, left: 45 };
+  const cw = W - pad.left - pad.right;
+  const ch = H - pad.top - pad.bottom;
+
+  // Grid
+  ctx.strokeStyle = '#1e2a3a';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 5; i++) {
+    const y = pad.top + (ch / 5) * i;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, y);
+    ctx.lineTo(W - pad.right, y);
+    ctx.stroke();
+    ctx.fillStyle = '#4a5568';
+    ctx.font = '11px JetBrains Mono';
+    ctx.textAlign = 'right';
+    ctx.fillText((15 - i * 3).toString(), pad.left - 10, y + 4);
+  }
+
+  // X labels
+  ctx.textAlign = 'center';
+  ctx.fillStyle = '#4a5568';
+  assignments.forEach((a, i) => {
+    const x = pad.left + (cw / (assignments.length - 1)) * i;
+    ctx.fillText(a.short, x, H - 10);
+  });
+
+  // Max line (dashed)
+  ctx.setLineDash([4, 4]);
+  ctx.strokeStyle = 'rgba(74, 85, 104, 0.2)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(pad.left, pad.top);
+  ctx.lineTo(W - pad.right, pad.top);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  function getPoints(key) {
+    return assignments.map((a, i) => ({
+      x: pad.left + (cw / (assignments.length - 1)) * i,
+      y: pad.top + ch - (a[key] / 15) * ch
+    }));
+  }
+
+  // Class average line (dashed indigo)
+  const avgPts = getPoints('classAvg');
+  ctx.beginPath();
+  ctx.strokeStyle = '#6366f1';
+  ctx.lineWidth = 2;
+  ctx.setLineDash([6, 4]);
+  avgPts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.stroke();
+  ctx.setLineDash([]);
+  avgPts.forEach(p => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#6366f1';
+    ctx.fill();
+  });
+
+  // Student gradient fill
+  const studentPts = getPoints('points');
+  const grad = ctx.createLinearGradient(0, pad.top, 0, H - pad.bottom);
+  grad.addColorStop(0, 'rgba(16, 185, 129, 0.15)');
+  grad.addColorStop(1, 'rgba(16, 185, 129, 0)');
+  ctx.beginPath();
+  ctx.moveTo(studentPts[0].x, H - pad.bottom);
+  studentPts.forEach(p => ctx.lineTo(p.x, p.y));
+  ctx.lineTo(studentPts[studentPts.length - 1].x, H - pad.bottom);
+  ctx.closePath();
+  ctx.fillStyle = grad;
+  ctx.fill();
+
+  // Student line
+  ctx.beginPath();
+  ctx.strokeStyle = '#10b981';
+  ctx.lineWidth = 3;
+  ctx.lineJoin = 'round';
+  ctx.lineCap = 'round';
+  studentPts.forEach((p, i) => i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y));
+  ctx.stroke();
+
+  // Student dots + labels
+  studentPts.forEach((p, i) => {
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = '#10b981';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = '#0a0e17';
+    ctx.fill();
+
+    ctx.fillStyle = '#e8edf5';
+    ctx.font = '600 12px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.fillText(assignments[i].points.toFixed(1), p.x, p.y - 14);
+  });
+
+  // Crossover marker at Jan where student meets class avg
+  ctx.fillStyle = 'rgba(16, 185, 129, 0.08)';
+  ctx.fillRect(studentPts[3].x - 1, pad.top, 2, ch);
+  ctx.fillStyle = '#10b981';
+  ctx.font = '500 9px JetBrains Mono';
+  ctx.textAlign = 'center';
+  ctx.fillText('Catches class avg', studentPts[3].x, pad.top - 8);
+}
+
+// ── Error Bars ──
+function buildErrorBars() {
+  const cats = [
+    { id: 'grammarBars', data: [4, 3, 3, 2, 1], color: 'var(--grammar)', max: 5 },
+    { id: 'vocabBars', data: [2, 2, 1, 1, 1], color: 'var(--vocab)', max: 5 },
+    { id: 'itBars', data: [3, 2, 2, 1, 1], color: 'var(--it-vocab)', max: 5 },
+    { id: 'contentBars', data: [1, 1, 1, 0, 0], color: 'var(--content)', max: 5 }
+  ];
+  const labels = ['Sept', 'Nov', 'Dec', 'Jan', 'Feb'];
+
+  cats.forEach(cat => {
+    const container = document.getElementById(cat.id);
+    cat.data.forEach((val, i) => {
+      const row = document.createElement('div');
+      row.className = 'error-bar-row';
+      const pct = (val / cat.max) * 100;
+      row.innerHTML = `
+        <div class="error-bar-label">${labels[i]}</div>
+        <div class="error-bar-bg">
+          <div class="error-bar-fill" style="background:${cat.color};" data-width="${pct}%"></div>
+        </div>
+        <div class="error-bar-num">${val}</div>
+      `;
+      container.appendChild(row);
+    });
+  });
+
+  setTimeout(() => {
+    document.querySelectorAll('.error-bar-fill').forEach(bar => {
+      bar.style.width = bar.dataset.width;
+    });
+  }, 600);
+}
+
+// ── Radar Chart ──
+function drawRadar(canvasId, values, fillColor, strokeColor) {
+  const canvas = document.getElementById(canvasId);
+  const ctx = canvas.getContext('2d');
+  const dpr = window.devicePixelRatio || 1;
+  const size = 260;
+  canvas.width = size * dpr;
+  canvas.height = size * dpr;
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+  ctx.scale(dpr, dpr);
+
+  const cx = size / 2;
+  const cy = size / 2;
+  const r = 100;
+  const labels = ['Grammar', 'Vocabulary', 'IT Terms', 'Content', 'Structure'];
+  const n = labels.length;
+  const angleStep = (Math.PI * 2) / n;
+  const startAngle = -Math.PI / 2;
+
+  // Grid rings
+  for (let ring = 1; ring <= 4; ring++) {
+    ctx.beginPath();
+    ctx.strokeStyle = '#1e2a3a';
+    ctx.lineWidth = 1;
+    for (let i = 0; i <= n; i++) {
+      const angle = startAngle + angleStep * i;
+      const rr = (r / 4) * ring;
+      const x = cx + Math.cos(angle) * rr;
+      const y = cy + Math.sin(angle) * rr;
+      i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+
+  // Spokes
+  for (let i = 0; i < n; i++) {
+    const angle = startAngle + angleStep * i;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle) * r, cy + Math.sin(angle) * r);
+    ctx.strokeStyle = '#1e2a3a';
+    ctx.stroke();
+  }
+
+  // Data polygon
+  ctx.beginPath();
+  values.forEach((v, i) => {
+    const angle = startAngle + angleStep * i;
+    const x = cx + Math.cos(angle) * r * v;
+    const y = cy + Math.sin(angle) * r * v;
+    i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = fillColor;
+  ctx.fill();
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  // Dots + Labels
+  values.forEach((v, i) => {
+    const angle = startAngle + angleStep * i;
+    const x = cx + Math.cos(angle) * r * v;
+    const y = cy + Math.sin(angle) * r * v;
+    ctx.beginPath();
+    ctx.arc(x, y, 3, 0, Math.PI * 2);
+    ctx.fillStyle = strokeColor;
+    ctx.fill();
+
+    const lx = cx + Math.cos(angle) * (r + 18);
+    const ly = cy + Math.sin(angle) * (r + 18);
+    ctx.fillStyle = '#8892a8';
+    ctx.font = '10px JetBrains Mono';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(labels[i], lx, ly);
+  });
+}
+</script>
+
+</body>
+</html>
