@@ -328,7 +328,7 @@ classes.forEach(cls=>{
     for(let t=scores.length-1;t>0;t--){if(scores[t]<scores[t-1]-0.3)declining++;else break;}
 
     allStudents.push({
-      id:`#2024-${cls.name}-${id}`,cls:cls.name,scores,avg:scoreAvg,xp,
+      id:`#2025-${cls.name}-${id}`,cls:cls.name,scores,avg:scoreAvg,xp,
       trendVal,declining,grammarErrs,vocabErrs,itErrs,contentErrs,totalErrs,
       latestErrors:totalErrs[4],latestGrammar:grammarErrs[4],
       latestVocab:vocabErrs[4],latestIT:itErrs[4],latestContent:contentErrs[4]

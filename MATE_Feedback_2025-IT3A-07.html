@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MATE Feedback | #2025-IT3A-07</title>
+<link rel="preconnect" href="https://fonts.bunny.net">
+<link href="https://fonts.bunny.net/css?family=dm-sans:400,500,700|jetbrains-mono:400,500" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f8f7f4;
+    --surface: #ffffff;
+    --text: #1a1a2e;
+    --text-secondary: #5a5a7a;
+    --text-muted: #9494aa;
+    --border: #e6e4df;
+    --accent: #e94560;
+    --accent-soft: #fef0f2;
+    --grammar: #d64045;
+    --grammar-soft: #fef0f0;
+    --vocab: #e07a2f;
+    --vocab-soft: #fef5ee;
+    --it-vocab: #1a8a6e;
+    --it-vocab-soft: #eef9f5;
+    --content: #6c5ce7;
+    --content-soft: #f3f1fe;
+    --success: #2d6a4f;
+    --success-soft: #eef7f2;
+    --radius: 10px;
+    --shadow: 0 1px 3px rgba(0,0,0,0.04), 0 4px 12px rgba(0,0,0,0.03);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'DM Sans', -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .container {
+    max-width: 740px;
+    margin: 0 auto;
+    padding: 32px 24px 48px;
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+  }
+  .header-left { display: flex; align-items: center; gap: 14px; }
+  .student-badge {
+    background: var(--text);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 10px 14px;
+    border-radius: 10px;
+    letter-spacing: 0.5px;
+    line-height: 1;
+  }
+  .header-info h1 {
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1.3;
+  }
+  .header-info span {
+    font-size: 12px;
+    color: var(--text-muted);
+    font-weight: 400;
+  }
+  .mate-logo {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 2px;
+    border: 1px solid var(--border);
+    padding: 6px 12px;
+    border-radius: 6px;
+  }
+
+  /* ── Grade Strip ── */
+  .grade-strip {
+    display: flex;
+    gap: 1px;
+    background: var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-bottom: 24px;
+    box-shadow: var(--shadow);
+  }
+  .grade-cell {
+    flex: 1;
+    background: var(--surface);
+    padding: 14px 16px;
+    text-align: center;
+  }
+  .grade-cell:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+  .grade-cell:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+  .grade-label {
+    font-size: 10px;
+    font-weight: 500;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 4px;
+  }
+  .grade-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .grade-sub {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+  }
+
+  /* ── Intro Card ── */
+  .intro-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px 20px;
+    margin-bottom: 24px;
+    font-size: 13.5px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+  }
+  .intro-card .highlight-demo {
+    background: #fff8f0;
+    border-bottom: 2px solid var(--vocab);
+    padding: 1px 5px;
+    border-radius: 3px;
+    font-size: 12px;
+  }
+
+  /* ── Progress ── */
+  .progress-wrap {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+  .progress-bar-bg {
+    flex: 1;
+    height: 6px;
+    background: var(--border);
+    border-radius: 20px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%;
+    border-radius: 20px;
+    transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    background: linear-gradient(90deg, var(--accent), var(--vocab));
+  }
+  .progress-bar-fill.complete {
+    background: linear-gradient(90deg, var(--success), var(--it-vocab));
+  }
+  .progress-text {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    white-space: nowrap;
+    min-width: 48px;
+    text-align: right;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+  .legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 3px;
+  }
+
+  /* ── Text Area ── */
+  .text-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 28px 30px;
+    margin-bottom: 16px;
+    font-size: 15px;
+    line-height: 2.1;
+    color: #2a2a3a;
+    box-shadow: var(--shadow);
+  }
+
+  .correction-span {
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    padding: 2px 3px;
+    border-radius: 3px;
+    transition: all 0.2s ease;
+    position: relative;
+    white-space: nowrap;
+  }
+  .correction-span:hover {
+    filter: brightness(0.95);
+  }
+  .correction-span.revealed {
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    opacity: 0.7;
+  }
+  .correction-span .sup-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    vertical-align: super;
+    margin-left: 1px;
+  }
+
+  /* Category specific colors */
+  .cat-grammar { border-bottom-color: var(--grammar); background: var(--grammar-soft); }
+  .cat-grammar .sup-num { color: var(--grammar); }
+  .cat-grammar.active { background: #fde0e0; }
+
+  .cat-vocab { border-bottom-color: var(--vocab); background: var(--vocab-soft); }
+  .cat-vocab .sup-num { color: var(--vocab); }
+  .cat-vocab.active { background: #fdebd4; }
+
+  .cat-it-vocab { border-bottom-color: var(--it-vocab); background: var(--it-vocab-soft); }
+  .cat-it-vocab .sup-num { color: var(--it-vocab); }
+  .cat-it-vocab.active { background: #d4f0e7; }
+
+  .cat-content { border-bottom-color: var(--content); background: var(--content-soft); }
+  .cat-content .sup-num { color: var(--content); }
+  .cat-content.active { background: #e5e1fc; }
+
+  /* ── Correction Card ── */
+  .correction-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+    transition: all 0.3s ease;
+    min-height: 72px;
+  }
+  .correction-card.empty {
+    background: var(--bg);
+    border: 1px dashed var(--border);
+    box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted);
+    font-size: 13px;
+    padding: 28px;
+  }
+  .card-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .card-cat-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: white;
+  }
+  .card-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  .card-correction {
+    margin-bottom: 16px;
+  }
+  .card-original {
+    color: var(--grammar);
+    text-decoration: line-through;
+    text-decoration-thickness: 1.5px;
+    font-size: 14px;
+    line-height: 1.6;
+    margin-bottom: 8px;
+  }
+  .card-arrow-fix {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  .card-arrow {
+    color: var(--text-muted);
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .card-fix {
+    color: var(--success);
+    font-weight: 600;
+    font-size: 14px;
+    background: var(--success-soft);
+    padding: 6px 12px;
+    border-radius: 6px;
+    line-height: 1.5;
+  }
+
+  .card-explanation {
+    background: #fafafa;
+    border-radius: 8px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    border-left: 3px solid var(--border);
+  }
+
+  /* ── Completion ── */
+  .completion-card {
+    background: var(--success-soft);
+    border: 1px solid #b7e4c7;
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    text-align: center;
+    margin-bottom: 20px;
+    display: none;
+  }
+  .completion-card.show { display: block; }
+  .completion-card .emoji { font-size: 28px; margin-bottom: 8px; }
+  .completion-card .title { font-weight: 700; color: var(--success); font-size: 15px; margin-bottom: 6px; }
+  .completion-card .body { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
+
+  /* ── Tip Box ── */
+  .tip-box {
+    background: #f0f0ff;
+    border: 1px solid #ddddf8;
+    border-radius: var(--radius);
+    padding: 18px 22px;
+    font-size: 13px;
+    color: var(--text-secondary);
+    line-height: 1.65;
+    margin-bottom: 20px;
+  }
+  .tip-box strong { color: var(--text); }
+
+  /* ── Footer ── */
+  .footer {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    text-align: center;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+
+  /* ── Animations ── */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .correction-card:not(.empty) {
+    animation: fadeIn 0.25s ease;
+  }
+
+  @media (max-width: 600px) {
+    .container { padding: 20px 16px 40px; }
+    .text-card { padding: 20px; font-size: 14px; line-height: 2; }
+    .grade-strip { flex-wrap: wrap; gap: 1px; }
+    .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .mate-logo { align-self: flex-end; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-left">
+      <div class="student-badge">#2025-IT3A-07</div>
+      <div class="header-info">
+        <h1>Your Feedback: Target Group Analysis</h1>
+        <span>English / Economics &middot; Task 3</span>
+      </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <a href="MATE_Progress_2025-IT3A-07.html" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent);text-decoration:none;padding:5px 12px;border:1px solid var(--accent);border-radius:8px;transition:all .2s;" onmouseover="this.style.background='var(--accent)';this.style.color='#0b0f19'" onmouseout="this.style.background='none';this.style.color='var(--accent)'">&#x2197; My Progress</a>
+      <div class="mate-logo">Ms Borgwardt</div>
+    </div>
+  </div>
+
+  <!-- Grade Strip -->
+  <div class="grade-strip">
+    <div class="grade-cell">
+      <div class="grade-label">Grade</div>
+      <div class="grade-value">4+</div>
+    </div>
+    <div class="grade-cell">
+      <div class="grade-label">Points</div>
+      <div class="grade-sub" style="color: var(--text);">6.3 / 15</div>
+    </div>
+    <div class="grade-cell">
+      <div class="grade-label">Task</div>
+      <div class="grade-sub" style="color: var(--it-vocab);">3&minus; (7.3)</div>
+    </div>
+    <div class="grade-cell">
+      <div class="grade-label">Language</div>
+      <div class="grade-sub" style="color: var(--vocab);">4 (5.4)</div>
+    </div>
+  </div>
+
+  <!-- Intro -->
+  <div class="intro-card" style="background: #f9f9ff; border-color: #e4e4f4;">
+    <div style="font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 8px;">Hi there!</div>
+    Thank you for handing in your task - I can see you put real thought into your target group analysis, 
+    especially the advertising concept at the end. That kind of creative thinking is exactly what this task is about.
+    <br><br>
+    I've gone through your submission carefully and highlighted a few areas where small changes would make 
+    a big difference. Click on the <span class="highlight-demo">highlighted words</span> in your text below to 
+    see each correction and why it matters. Take your time and go through them one by one - there's no rush.
+    <br><br>
+    <span style="font-size: 12px; color: var(--text-muted);">If you have any questions about this feedback, come talk to me after class. I'm happy to explain anything further.</span>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-wrap">
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="progressFill" style="width: 0%"></div>
+    </div>
+    <div class="progress-text" id="progressText">0 / 10</div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item"><div class="legend-dot" style="background:var(--grammar)"></div>Grammar</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--vocab)"></div>Vocabulary</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--it-vocab)"></div>IT Vocabulary</div>
+    <div class="legend-item"><div class="legend-dot" style="background:var(--content)"></div>Content</div>
+  </div>
+
+  <!-- Student Text -->
+  <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted); margin-bottom: 10px; margin-top: 8px;">Your Submission</div>
+  <div class="text-card" id="textCard"></div>
+
+  <!-- Correction Card -->
+  <div class="correction-card empty" id="correctionCard">
+    Click on any highlighted text above to see the correction
+  </div>
+
+  <!-- Completion -->
+  <div class="completion-card" id="completionCard">
+    
+    <div class="title">Well done - all corrections reviewed!</div>
+    <div class="body">
+      You've gone through all 10 areas of feedback. That already shows great effort!
+      Now scroll down to the <strong>"How to Improve"</strong> section for your next steps,
+      and try the practice worksheet to lock in what you've learned. You've got this.
+    </div>
+  </div>
+
+  <!-- How to Improve -->
+  <div class="tip-box" style="background: #f4f8ff; border-color: #d4dff7; padding: 24px 26px;">
+    <div style="font-size: 16px; font-weight: 700; color: var(--text); margin-bottom: 14px;">How to Improve Your Grade</div>
+    
+    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 16px; line-height: 1.7;">
+      Your feedback above shows you exactly where to focus. Here's how to make the most of it:
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start;">
+      <div style="background: var(--grammar); color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">1</div>
+      <div style="font-size: 13px; line-height: 1.65; color: var(--text-secondary);">
+        <strong style="color: var(--text);">Click through all 10 corrections above.</strong> 
+        Don't just skim them - read the explanation for each one. Understanding <em>why</em> something is wrong matters more than just seeing the fix.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start;">
+      <div style="background: var(--vocab); color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">2</div>
+      <div style="font-size: 13px; line-height: 1.65; color: var(--text-secondary);">
+        <strong style="color: var(--text);">Notice the patterns.</strong> 
+        Most of your errors fall into two areas: <strong>subject-verb agreement</strong> (is/are with singular nouns) and <strong>IT vocabulary</strong> (using industry-standard terms instead of everyday language). These are the two things that will move your grade the most.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-bottom: 14px; align-items: flex-start;">
+      <div style="background: var(--it-vocab); color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">3</div>
+      <div style="font-size: 13px; line-height: 1.65; color: var(--text-secondary);">
+        <strong style="color: var(--text);">Go deeper on content.</strong> 
+        Your target group analysis names the audience, but doesn't explain <em>why</em> they're the right fit. Use concepts from class like market segmentation, USP, and pain points. Spend more time on the analysis and less on the ad description.
+      </div>
+    </div>
+
+    <div style="display: flex; gap: 12px; margin-bottom: 18px; align-items: flex-start;">
+      <div style="background: var(--content); color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">4</div>
+      <div style="font-size: 13px; line-height: 1.65; color: var(--text-secondary);">
+        <strong style="color: var(--text);">Practice with the worksheet below.</strong> 
+        I've created a short exercise sheet that targets exactly the mistakes from your submission. It covers the grammar patterns and vocabulary you need to work on. Completing it will prepare you well for the next task.
+      </div>
+    </div>
+
+    <div style="font-size: 13px; color: var(--text-secondary); background: white; border-radius: 8px; padding: 14px 18px; border: 1px solid #d4dff7; line-height: 1.6;">
+      <strong style="color: var(--text);">Your strengths:</strong> Your creative ideas for the ad concept are really good - the storytelling approach with the struggling vs. organized student shows real marketing instinct. Keep that energy, and pair it with stronger analysis and more precise language. You can absolutely get to a 3 and beyond.
+    </div>
+  </div>
+
+  <!-- Worksheet Link -->
+  <div style="background: var(--surface); border: 2px dashed var(--it-vocab); border-radius: var(--radius); padding: 22px 26px; margin-bottom: 20px; text-align: center;">
+    
+    <div style="font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px;">Your Personal Practice Worksheet</div>
+    <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 14px; line-height: 1.6;">
+      Exercises based on your individual feedback - grammar, vocabulary, and content tasks tailored to what you need to practice.
+    </div>
+    <a href="MATE_Worksheet_2025-IT3A-07.html" style="display: inline-block; background: var(--it-vocab); color: white; text-decoration: none; padding: 10px 28px; border-radius: 8px; font-size: 14px; font-weight: 600; transition: opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+      Open Worksheet &rarr;
+    </a>
+  </div>
+
+  <!-- GDPR / Data Privacy Disclaimer -->
+  <div style="background: #f7f7f7; border: 1px solid var(--border); border-radius: var(--radius); padding: 20px 24px; margin-bottom: 20px;">
+    <div style="font-size: 13px; font-weight: 700; color: var(--text); margin-bottom: 10px;">Data Privacy Notice</div>
+    <div style="font-size: 12px; color: var(--text-secondary); line-height: 1.75;">
+      This feedback was created with the support of AI-assisted language analysis. As we discussed in class, I take your data privacy very seriously and follow strict GDPR (DSGVO) rules at every step:
+      <ul style="margin: 10px 0 10px 16px; padding: 0;">
+        <li style="margin-bottom: 6px;"><strong>No names, ever.</strong> Your name and any identifying information are removed from all texts <em>before</em> any AI processing takes place. The AI only ever sees anonymized text - it has no way of knowing who wrote it.</li>
+        <li style="margin-bottom: 6px;"><strong>EU-based processing only.</strong> All AI analysis runs on European servers. Your data is never sent to the United States or any other non-EU country.</li>
+        <li style="margin-bottom: 6px;"><strong>No storage or training.</strong> Your text is processed once and not stored by any AI system. It is never used to train AI models.</li>
+        <li style="margin-bottom: 6px;"><strong>Teacher review.</strong> Every correction, grade, and comment in this feedback has been reviewed and approved by me personally. The AI assists - it does not grade.</li>
+        <li><strong>Offline delivery.</strong> This file works entirely offline. It doesn't connect to the internet, doesn't track you, and doesn't send any data anywhere. It's like a sheet of paper - just digital.</li>
+      </ul>
+      If you have any questions about how your data is handled, you are always welcome to ask me directly.
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    MATE &middot; Ms Borgwardt &middot; ████████████████ &middot; Final grade determined by instructor
+  </div>
+
+</div>
+
+<script>
+const corrections = [
+  { id:1, original:"My target group are", fix:"My target group is", cat:"grammar", catLabel:"Grammar",
+    explanation:"\"Target group\" is singular, so it needs the singular verb \"is\" instead of \"are.\"" },
+  { id:2, original:"studys", fix:"studies", cat:"grammar", catLabel:"Grammar",
+    explanation:"The correct plural of \"study\" is \"studies.\"" },
+  { id:3, original:"which are 22 and 27", fix:"which is between 22 and 27", cat:"grammar", catLabel:"Grammar",
+    explanation:"The subject is \"age\" (singular) \u2192 use \"is.\" Adding \"between\" makes the range clearer." },
+  { id:4, original:"bound by nation", fix:"limited by nationality", cat:"vocab", catLabel:"Vocabulary",
+    explanation:"\"Bound by nation\" isn't a standard English expression. \"Limited by nationality\" is clearer and more professional." },
+  { id:5, original:"technological advances", fix:"technological innovations", cat:"it-vocab", catLabel:"IT Vocabulary",
+    explanation:"In a product development context, \"innovations\" is more precise than the generic \"advances.\"" },
+  { id:6, original:"implanted in the user\u00b7s brains", fix:"implanted in the user's brain", cat:"grammar", catLabel:"Grammar",
+    explanation:"Each user has one brain \u2014 use the singular form. Also consider using the technical term \"neural interface.\"" },
+  { id:7, original:"objects connected to their brains", fix:"neural devices", cat:"it-vocab", catLabel:"IT Vocabulary",
+    explanation:"\"Neural devices\" or \"brain-computer interfaces\" are the industry-standard terms for this concept." },
+  { id:8, original:"glasses model", fix:"wearable device / smart glasses", cat:"it-vocab", catLabel:"IT Vocabulary",
+    explanation:"\"Wearable device\" is the established product category in the IT industry." },
+  { id:9, original:"My AI can help them with their studies and allow them to save time. My AI also makes studying easier.", fix:"Remove \u2014 explain HOW your AI helps instead", cat:"content", catLabel:"Content",
+    explanation:"These two sentences repeat the same idea from earlier without adding anything new. What does your AI actually do? Summarize content? Create quizzes? Organize schedules? Be specific." },
+  { id:10, original:"of the sorts", fix:"Remove \u2014 informal filler", cat:"vocab", catLabel:"Vocabulary",
+    explanation:"\"Of the sorts\" is informal filler that doesn't add meaning. Just end the sentence without it." }
+];
+
+const catColors = {
+  grammar: "var(--grammar)",
+  vocab: "var(--vocab)",
+  "it-vocab": "var(--it-vocab)",
+  content: "var(--content)"
+};
+
+let activeId = null;
+const revealed = new Set();
+
+const fullText = `My target group are people studying from the age 18 and up until the average age of finishing studys such as university which are 22 and 27. My target group isn\u2019t bound by nation and is accessible globally. My target group would be excited about the new technological advances and how it helps them with their day-to-day life. My AI is trying to solve the issue that studying/learning is a difficult challenge and my AI is there to help them with the burden of studying. My AI\u00b7s drawbacks are that currently it is implanted in the user\u00b7s brains and not everyone is necessarily keen on getting objects connected to their brains. This could be fixed with a glasses model instead of an implant. My AI can help them with their studies and allow them to save time. My AI also makes studying easier. The advertisements would be seen on platforms that are mainly focused on videos and especially on users who seem to watch videos focused on teaching, studying, and learning of the sorts. The ads would be inspiring and professional. They would depict a student struggling with studying/learning and as he is visibly struggling, he gets a notification from a friend or family member asking to spend time with them. Then it shows a schedule full of study sessions planned in advance of an exam. Then it shows another student easily learning/studying and planning to hang out or spend time. Then we are shown the POV of this student and then we see the default avatar which will then explain the product.`;
+
+function buildText() {
+  const sorted = [...corrections].sort((a, b) => fullText.indexOf(a.original) - fullText.indexOf(b.original));
+  let remaining = fullText;
+  let html = '';
+
+  sorted.forEach(c => {
+    const idx = remaining.indexOf(c.original);
+    if (idx === -1) return;
+    html += escHtml(remaining.substring(0, idx));
+    html += `<span class="correction-span cat-${c.cat}" data-id="${c.id}" onclick="handleClick(${c.id})">${escHtml(c.original)}<span class="sup-num">${c.id}</span></span>`;
+    remaining = remaining.substring(idx + c.original.length);
+  });
+  html += escHtml(remaining);
+  document.getElementById('textCard').innerHTML = html;
+}
+
+function escHtml(s) {
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function handleClick(id) {
+  activeId = activeId === id ? null : id;
+  revealed.add(id);
+  updateUI();
+}
+
+function updateUI() {
+  // Update spans
+  document.querySelectorAll('.correction-span').forEach(el => {
+    const id = parseInt(el.dataset.id);
+    el.classList.toggle('active', activeId === id);
+    el.classList.toggle('revealed', revealed.has(id));
+  });
+
+  // Update progress
+  const pct = (revealed.size / corrections.length) * 100;
+  const fill = document.getElementById('progressFill');
+  fill.style.width = pct + '%';
+  fill.classList.toggle('complete', revealed.size === corrections.length);
+  document.getElementById('progressText').textContent = `${revealed.size} / ${corrections.length}`;
+
+  // Update card
+  const card = document.getElementById('correctionCard');
+  if (activeId === null) {
+    card.className = 'correction-card empty';
+    card.innerHTML = 'Click on any highlighted text above to see the correction';
+    return;
+  }
+
+  const c = corrections.find(x => x.id === activeId);
+  const color = catColors[c.cat];
+  card.className = 'correction-card';
+  card.style.borderColor = color;
+  card.innerHTML = `
+    <div class="card-header">
+      <span class="card-cat-badge" style="background:${color}">${c.catLabel}</span>
+      <span class="card-num">#${c.id}</span>
+    </div>
+    <div class="card-correction">
+      <div class="card-original">${escHtml(c.original)}</div>
+      <div class="card-arrow-fix">
+        <span class="card-arrow">\u2192</span>
+        <span class="card-fix">${escHtml(c.fix)}</span>
+      </div>
+    </div>
+    <div class="card-explanation" style="border-left-color:${color}">
+      \u2192 ${escHtml(c.explanation)}
+    </div>
+  `;
+
+  // Completion
+  document.getElementById('completionCard').classList.toggle('show', revealed.size === corrections.length);
+}
+
+buildText();
+</script>
+
+</body>
+</html>
